@@ -1,0 +1,94 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.lxx.hserver.mapper.SalaryMapper">
+    <resultMap id="base_salary_dep" type="salary">
+        <id property="id" column="id"/>
+        <result column="basicSalary" property="basicSalary"/>
+        <result column="bonus" property="bonus"/>
+        <result column="lunchSalary" property="lunchSalary"/>
+        <result column="trafficSalary" property="trafficSalary"/>
+        <result column="allSalary" property="allSalary"/>
+        <result column="pensionBase" property="pensionBase"/>
+        <result column="pensionPer" property="pensionPer"/>
+        <result column="createDate" property="createDate"/>
+        <result column="medicalBase" property="medicalBase"/>
+        <result column="medicalPer" property="medicalPer"/>
+        <result column="accumulationFundBase" property="accumulationFundBase"/>
+        <result column="accumulationFundPer" property="accumulationFundPer"/>
+        <result column="name" property="name"/>
+        <association property="department" javaType="department">
+            <id property="id" column="did"/>
+            <result column="dname" property="name"/>
+        </association>
+    </resultMap>
+    <insert id="addSalary" parameterType="salary" useGeneratedKeys="true" keyProperty="id" keyColumn="id">
+        insert into salary(basicSalary,bonus,lunchSalary,trafficSalary,allSalary,pensionBase,pensionPer,
+        createDate,medicalBase,medicalPer,accumulationFundBase,accumulationFundPer,name)
+        values (#{salary.basicSalary},#{salary.bonus},#{salary.lunchSalary},
+        #{salary.trafficSalary},#{salary.allSalary},#{salary.pensionBase},#{salary.pensionPer},#{salary.createDate},
+        #{salary.medicalBase},#{salary.medicalPer},#{salary.accumulationFundBase},#{salary.accumulationFundPer},
+        #{salary.name})
+    </insert>
+    <select id="getAllSalary" resultMap="base_salary_dep">
+        select s.*,d.id as did,d.name as dname
+        from salary s left join departmentsalary ds on ds.sid=s.id
+        left join department d on d.id=ds.did
+        where d.enabled=true;
+    </select>
+    <update id="updateSalary" parameterType="salary">
+        update salary
+        <set>
+            <if test="salary.bonus!=null">
+                bonus=#{salary.bonus},
+            </if>
+            <if test="salary.lunchSalary!=null">
+                lunchSalary=#{salary.lunchSalary},
+            </if>
+            <if test="salary.basicSalary!=null">
+                basicSalary=#{salary.basicSalary},
+            </if>
+            <if test="salary.allSalary!=null">
+                allSalary=#{salary.allSalary},
+            </if>
+            <if test="salary.pensionBase!=null">
+                pensionBase=#{salary.pensionBase},
+            </if>
+            <if test="salary.pensionPer!=null">
+                pensionPer=#{salary.pensionPer},
+            </if>
+            <if test="salary.medicalBase!=null">
+                medicalBase=#{salary.medicalBase},
+            </if>
+            <if test="salary.medicalPer!=null">
+                medicalPer=#{salary.medicalPer},
+            </if>
+            <if test="salary.accumulationFundBase!=null">
+                accumulationFundBase=#{salary.accumulationFundBase},
+            </if>
+            <if test="salary.accumulationFundPer!=null">
+                accumulationFundPer=#{salary.accumulationFundPer},
+            </if>
+            <if test="salary.name!=null">
+                name=#{salary.name},
+            </if>
+        </set>
+        where id=#{salary.id}
+    </update>
+    <delete id="deleteSalary">
+        delete from salary
+        where id in
+        <foreach collection="ids" separator="," item="id" open="(" close=")">
+            #{id}
+        </foreach>
+    </delete>
+    <update id="updateDepartmentSalary" parameterType="int">
+        update departmentsalary as ds
+        set ds.did=#{did}
+        where ds.sid=#{sid}
+    </update>
+    <insert id="addDepartmentSalary" parameterType="int" >
+        insert into departmentsalary(sid,did)
+        values (#{sid},#{did})
+    </insert>
+
+</mapper>

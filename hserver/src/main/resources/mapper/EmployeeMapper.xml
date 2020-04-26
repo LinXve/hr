@@ -1,0 +1,288 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.lxx.hserver.mapper.EmployeeMapper">
+    <resultMap id="BaseResultMap" type="employee" >
+        <id column="id" property="id"/>
+        <result property="name" column="name"/>
+        <result column="gender" property="gender"/>
+        <result property="birthday" column="birthday"/>
+        <result property="idCard" column="idCard"/>
+        <result property="wedlock" column="wedlock"/>
+        <result property="nationId" column="nationId"/>
+        <result property="nativePlace" column="nativePlace"/>
+        <result property="politicId" column="politicId"/>
+        <result property="email" column="email"/>
+        <result column="phone" property="phone"/>
+        <result property="address" column="address"/>
+        <result column="departmentId" property="departmentId" />
+        <result property="jobLevelId" column="jobLevelId" />
+        <result property="posId" column="posId"/>
+        <result column="engageForm" property="engageForm"/>
+        <result property="tiptopDegree" column="tiptopDegree"/>
+        <result column="specialty" property="specialty"/>
+        <result property="school" column="school"/>
+        <result column="beginDate" property="beginDate"/>
+        <result property="workState" column="workState"/>
+        <result column="workID" property="workID"/>
+        <result property="contractTerm" column="contractTerm"/>
+        <result column="conversionTime" property="conversionTime"/>
+        <result property="notWorkDate" column="notWorkDate"/>
+        <result column="beginContract" property="beginContract"/>
+        <result property="endContract" column="endContract"/>
+        <result column="workAge" property="workAge"/>
+        <association property="jobLevel" javaType="com.lxx.hserver.entity.JobLevel">
+            <id property="id" column="jlid"/>
+            <result column="jlname" property="name"/>
+            <result property="titleLevel" column="jlTitleLevel"/>
+        </association>
+        <association property="department" javaType="department">
+            <id property="id" column="did"/>
+            <result column="dname" property="name"/>
+        </association>
+        <association property="nation" javaType="com.lxx.hserver.entity.Nation">
+            <id column="nid" property="id"/>
+            <result property="name" column="nname"/>
+        </association>
+        <association property="position" javaType="Position">
+            <id column="pid" property="id"/>
+            <result property="name" column="pname"/>
+        </association>
+        <association property="politicsStatus" javaType="com.lxx.hserver.entity.PoliticsStatus">
+            <id property="id" column="psid"/>
+            <result column="psname" property="name"/>
+        </association>
+    </resultMap>
+    <resultMap id="Base_emp_salary_result" type="employee">
+        <id property="id" column="id"/>
+        <result column="name" property="name"/>
+        <result property="workID" column="workID"/>
+        <result column="email" property="email"/>
+        <result property="phone" column="phone"/>
+        <association property="department" javaType="department">
+            <id column="did" property="id"/>
+            <result property="name" column="dname"/>
+            <association property="salary" javaType="salary">
+                <id column="sid" property="id"/>
+                <result property="name" column="sname"/>
+                <result property="basicSalary" column="basicSalary"/>
+                <result column="bonus" property="bonus"/>
+                <result property="lunchSalary" column="lunchSalary"/>
+                <result column="trafficSalary" property="trafficSalary"/>
+                <result column="pensionBase" property="pensionBase"/>
+                <result property="pensionPer" column="pensionPer"/>
+                <result column="createDate" property="createDate"/>
+                <result column="medicalPer" property="medicalPer"/>
+                <result column="medicalBase" property="medicalBase"/>
+                <result column="accumulationFundBase" property="accumulationFundBase"/>
+                <result column="accumulationFundPer" property="accumulationFundPer"/>
+            </association>
+        </association>
+    </resultMap>
+    <select id="getAllNations" resultType="nation">
+        select  * from nation ;
+    </select>
+
+    <select id="getAllPolitics" resultType="politicsStatus" >
+        select * from politicsstatus;
+    </select>
+    <select id="getMaxWorkID" resultType="Long" >
+        select max(workID)
+        from employee
+    </select>
+    <insert id="addEmp" parameterType="Employee">
+        insert into employee(name,gender,birthday,idCard,wedlock,nationId,nativePlace,politicId,email,
+        phone,address,departmentId,jobLevelId,posId,engageForm,tiptopDegree,specialty,school,beginDate,workID,
+        contractTerm,conversionTime,beginContract,endContract
+        )
+        values (
+        #{name},#{gender},#{birthday},#{idCard},#{wedlock},#{nationId},#{nativePlace},#{politicId},#{email},
+        #{phone},#{address},#{departmentId},#{jobLevelId},#{posId},#{engageForm},#{tiptopDegree},#{specialty},
+        #{school},#{beginDate},#{workID},#{contractTerm},#{conversionTime},#{beginContract},#{endContract}
+        )
+    </insert>
+    <insert id="addEmps" parameterType="List">
+        insert into employee(name,gender,birthday,idCard,wedlock,
+        nationId,nativePlace,politicId,email,phone,address,departmentId,jobLevelId,posId,engageForm,
+        tiptopDegree,specialty,school,beginDate,workID,contractTerm,conversionTime,beginContract,endContract,workAge
+        )
+        values
+        <foreach collection="emps" item="emp" separator=",">
+            (
+            #{emp.name},#{emp.gender},#{emp.birthday},#{emp.idCard},#{emp.wedlock},
+            #{emp.nationId},#{emp.nativePlace},#{emp.politicId},#{emp.email},#{emp.phone},
+            #{emp.address},#{emp.departmentId},#{emp.jobLevelId},#{emp.posId},#{emp.engageForm},
+            #{emp.tiptopDegree},#{emp.specialty},#{emp.school},#{emp.beginDate},#{emp.workID},
+            #{emp.contractTerm},#{emp.conversionTime},#{emp.beginContract},#{emp.endContract},#{emp.workAge}
+            )
+        </foreach>
+    </insert>
+    <update id="updateEmp" parameterType="com.lxx.hserver.entity.Employee" >
+        update employee
+        <set>
+            <if test="employee.gender!=null">
+                gender =#{employee.gender},
+            </if>
+            <if test="employee.name!=null">
+                name =#{employee.name},
+            </if>
+            <if test="employee.birthday!=null">
+                birthday =#{employee.birthday},
+            </if>
+            <if test="employee.idCard!=null">
+                idCard =#{employee.idCard},
+            </if>
+            <if test="employee.wedlock!=null">
+                wedlock =#{employee.wedlock},
+            </if>
+            <if test="employee.nationId!=null">
+                nationId =#{employee.nationId},
+            </if>
+            <if test="employee.nativePlace!=null">
+                nativePlace =#{employee.nativePlace},
+            </if>
+            <if test="employee.politicId!=null">
+                politicId =#{employee.politicId},
+            </if>
+            <if test="employee.email!=null">
+                email =#{employee.email},
+            </if>
+            <if test="employee.phone!=null">
+                phone =#{employee.phone},
+            </if>
+            <if test="employee.workAge!=null">
+                workAge=#{employee.workAge},
+            </if>
+            <if test="employee.address!=null">
+                address =#{employee.address},
+            </if>
+            <if test="employee.departmentId!=null">
+                departmentId =#{employee.departmentId},
+            </if>
+            <if test="employee.jobLevelId!=null">
+                jobLevelId =#{employee.jobLevelId},
+            </if>
+            <if test="employee.posId!=null">
+                posId =#{employee.posId},
+            </if>
+
+            <if test="employee.engageForm!=null">
+                engageForm =#{employee.engageForm},
+            </if>
+            <if test="employee.tiptopDegree!=null">
+                tiptopDegree =#{employee.tiptopDegree},
+            </if>
+            <if test="employee.specialty!=null">
+                specialty =#{employee.specialty},
+            </if>
+            <if test="employee.school!=null">
+                school =#{employee.school},
+            </if>
+            <if test="employee.beginDate!=null">
+                beginDate =#{employee.beginDate},
+            </if>
+            <if test="employee.workState!=null">
+                workState =#{employee.workState},
+            </if>
+
+            <if test="employee.contractTerm!=null">
+                contractTerm =#{employee.contractTerm},
+            </if>
+            <if test="employee.conversionTime!=null">
+                conversionTime =#{employee.conversionTime},
+            </if>
+            <if test="employee.notWorkDate!=null">
+                notWorkDate =#{employee.notWorkDate},
+            </if>
+            <if test="employee.beginContract!=null">
+                beginContract =#{employee.beginContract},
+            </if>
+            <if test="employee.endContract!=null">
+                endContract =#{employee.endContract},
+            </if>
+        </set>
+        where id=#{employee.id}
+    </update>
+    <select id="getEmployeesByPage" resultMap="BaseResultMap" >
+        select e.*,jl.id as jlid,jl.name as jlname,jl.titleLevel as jlTitleLevel,d.id as did,d.name as dname,
+        n.id as nid,n.name as nname,p.id as pid,p.name as pname,ps.id as psid,ps.name as psname
+        from employee as e ,joblevel as jl,department as d,nation n ,position as p,politicsstatus as ps
+        where e.posId=p.id and e.jobLevelId=jl.id and e.departmentId=d.id and e.nationId=n.id and e.politicId=ps.id
+        <if test="keywords!=null and keywords!=''">
+            and e.name like concat('%',#{keywords},'%')
+        </if>
+        <if test="engageForm!=null and engageForm!=''">
+            and e.engageForm=#{engageForm}
+        </if>
+        <if test="politicId!=null and politicId!=''">
+            and e.politicId=#{politicId}
+        </if>
+        <if test="nationId!=null and nationId!=''">
+            and e.nationId=#{nationId}
+        </if>
+        <if test="posId!=null and posId!=''">
+            and e.posId=#{posId}
+        </if>
+        <if test="jobLevelId!=null and jobLevelId!=''">
+            and e.jobLevelId=#{jobLevelId}
+        </if>
+        <if test="departmentId!=null and departmentId!=''">
+            and e.departmentId=#{departmentId}
+        </if>
+        <if test="startBeginDate!=null and endBeginDate!=null">
+            and e.beginDate between #{startBeginDate} and #{endBeginDate}
+        </if>
+        <if test="start!=null">
+            order by e.id limit #{start},10
+        </if>
+    </select>
+
+    <select id="getCountBykeywords" resultType="int">
+        select count(*) from  employee as e
+        where e.name like concat('%',#{keywords},'%')
+        <if test="engageForm!=null and engageForm!=''">
+            and e.engageForm=#{engageForm}
+        </if>
+        <if test="politicId!=null and politicId!=''">
+            and e.politicId=#{politicId}
+        </if>
+        <if test="nationId!=null and nationId!=''">
+            and e.nationId=#{nationId}
+        </if>
+        <if test="posId!=null and posId!=''">
+            and e.posId=#{posId}
+        </if>
+        <if test="jobLevelId!=null and jobLevelId!=''">
+            and e.jobLevelId=#{jobLevelId}
+        </if>
+        <if test="departmentId!=null and departmentId!=''">
+            and e.departmentId=#{departmentId}
+        </if>
+        <if test="startBeginDate!=null and endBeginDate!=null">
+            and e.beginDate between #{startBeginDate} and #{endBeginDate}
+        </if>
+    </select>
+    <select id="getEmpDepartmentSalary"  resultMap="Base_emp_salary_result">
+        select e.id,e.name,e.workID,e.email,e.phone,d.id as did,d.name as dname,
+        s.id as sid,s.name as sname,s.basicSalary,s.bonus,s.lunchSalary,s.trafficSalary,
+        s.pensionBase,s.pensionPer,s.createDate,s.medicalPer,s.medicalBase,
+        s.accumulationFundBase,s.accumulationFundPer
+        FROM employee e LEFT JOIN department d ON e.departmentId=d.id
+        LEFT JOIN departmentsalary ds ON d.id=ds.did
+        LEFT JOIN salary s ON s.id=ds.sid
+        where e.name like concat('%',#{keywords},'%')
+        ORDER BY e.id limit #{page},10
+    </select>
+    <select id="getCountByEmpDepSal" resultType="int" >
+            select count(*)
+        FROM employee e LEFT JOIN department d ON e.departmentId=d.id
+        LEFT JOIN departmentsalary ds ON d.id=ds.did
+        LEFT JOIN salary s ON s.id=ds.sid
+			WHERE e.`name` like CONCAT('%',#{keywords},'%');
+    </select>
+    <delete id="deleteEmpById" >
+        delete from employee where id in
+        <foreach collection="ids" separator="," item="id" close=")" open="(">
+            #{id}
+        </foreach>
+    </delete>
+</mapper>

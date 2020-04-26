@@ -1,0 +1,31 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.lxx.hserver.mapper.DepartmentMapper">
+    <resultMap id="Base_result" type="department" >
+        <id property="id" column="id"/>
+        <result property="name" column="name"/>
+        <result property="enabled" column="enabled"/>
+        <result property="parentId" column="parentId"/>
+<!--        collection中的select参数调用一个查询（emm，调用原查询递归了），-->
+        <collection property="childs" ofType="department" select="getDepByPid" column="id">
+        </collection>
+    </resultMap>
+    <select id="getDepByPid" parameterType="int" resultMap="Base_result">
+        select d1.id,d1.name,d1.enabled,d1.parentId
+        from department d1
+        where d1.parentId=#{pid} and d1.enabled=true ;
+    </select>
+    <select id="getDepById" parameterType="int" resultType="department">
+        select *
+        from department
+        where id=#{id}
+    </select>
+    <insert id="addDep" parameterType="department" useGeneratedKeys="true" keyColumn="id" keyProperty="id">
+        insert into department(name,parentId)
+        values(#{department.name},#{department.parentId})
+    </insert>
+    <delete id="deleteDep" parameterType="int" >
+        delete from department
+        where id=#{id}
+    </delete>
+</mapper>

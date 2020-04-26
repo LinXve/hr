@@ -1,0 +1,19 @@
+mybatis:
+  type-aliases-package: com.lxx.hserver.entity
+  mapper-locations: classpath:mapper/*Mapper.xml
+
+spring:
+  datasource:
+    driver-class-name: com.mysql.jdbc.Driver
+    type: com.alibaba.druid.pool.DruidDataSource
+    url: jdbc:mysql://localhost:3307/ssn?useUnicode=true&characterEncoding=utf8&serverTimezone=UTC
+    username: root
+    password: 123456
+  mail:
+    host: smtp.qq.com
+    username: 1043138485@qq.com
+    password: qrnwznemybukbdda
+    default-encoding: utf-8
+
+server:
+  port: 8082

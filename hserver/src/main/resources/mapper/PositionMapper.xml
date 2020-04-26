@@ -1,0 +1,47 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.lxx.hserver.mapper.PositionMapper">
+    <resultMap id="baseResult" type="Position">
+        <id column="id" property="id"/>
+        <result property="name" column="name"/>
+        <result column="createDate" property="createDate"/>
+        <result property="enabled" column="enabled"/>
+    </resultMap>
+    <select id="getAllPos" resultMap="baseResult" >
+        select *
+        from position
+        where enabled=true ;
+    </select>
+    <select id="getPos" resultMap="baseResult" >
+        select *
+        from position;
+    </select>
+    <select id="getPosByName" parameterType="string" resultType="position" >
+        select * from `position` where name=#{name};
+    </select>
+    <insert id="insertPos" parameterType="position">
+        insert into `position`(name,createDate,enabled)
+        values (#{pos.name},#{pos.createDate},#{pos.enabled})
+    </insert>
+    <update id="disabledPos" >
+        update `position`
+        set enabled=#{pos.enabled}
+        where id=#{pos.id}
+    </update>
+    <update id="updatePos" parameterType="position">
+        update `position`
+        <set>
+            <if test="pos.name!=null and pos.name!=''" >
+                name=#{pos.name},
+            </if>
+
+        </set>
+        where id=#{pos.id}
+    </update>
+    <delete id="deletePosById" parameterType="string">
+        delete from `position` where id in
+        <foreach collection="ids" item="id" separator="," close=")" open="(" >
+            #{id}
+        </foreach>
+    </delete>
+</mapper>

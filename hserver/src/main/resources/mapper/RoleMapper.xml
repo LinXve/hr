@@ -1,0 +1,219 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.lxx.hserver.mapper.RoleMapper">
+  <resultMap id="BaseResultMap" type="com.lxx.hserver.entity.Role">
+    <id column="rid" jdbcType="INTEGER" property="rid" />
+    <result column="available" jdbcType="BIT" property="available" />
+    <result column="description" jdbcType="VARCHAR" property="description" />
+    <result column="role" jdbcType="VARCHAR" property="role" />
+    <collection property="permissions" ofType="permission" >
+      <id property="pid" column="pid" />
+      <result column="pname" property="name"/>
+      <result property="permission" column="permission"/>
+      <result column="url" property="url"/>
+      <result property="path" column="path"/>
+    </collection>
+  </resultMap>
+  <sql id="Example_Where_Clause">
+    <where>
+      <foreach collection="oredCriteria" item="criteria" separator="or">
+        <if test="criteria.valid">
+          <trim prefix="(" prefixOverrides="and" suffix=")">
+            <foreach collection="criteria.criteria" item="criterion">
+              <choose>
+                <when test="criterion.noValue">
+                  and ${criterion.condition}
+                </when>
+                <when test="criterion.singleValue">
+                  and ${criterion.condition} #{criterion.value}
+                </when>
+                <when test="criterion.betweenValue">
+                  and ${criterion.condition} #{criterion.value} and #{criterion.secondValue}
+                </when>
+                <when test="criterion.listValue">
+                  and ${criterion.condition}
+                  <foreach close=")" collection="criterion.value" item="listItem" open="(" separator=",">
+                    #{listItem}
+                  </foreach>
+                </when>
+              </choose>
+            </foreach>
+          </trim>
+        </if>
+      </foreach>
+    </where>
+  </sql>
+  <sql id="Update_By_Example_Where_Clause">
+    <where>
+      <foreach collection="example.oredCriteria" item="criteria" separator="or">
+        <if test="criteria.valid">
+          <trim prefix="(" prefixOverrides="and" suffix=")">
+            <foreach collection="criteria.criteria" item="criterion">
+              <choose>
+                <when test="criterion.noValue">
+                  and ${criterion.condition}
+                </when>
+                <when test="criterion.singleValue">
+                  and ${criterion.condition} #{criterion.value}
+                </when>
+                <when test="criterion.betweenValue">
+                  and ${criterion.condition} #{criterion.value} and #{criterion.secondValue}
+                </when>
+                <when test="criterion.listValue">
+                  and ${criterion.condition}
+                  <foreach close=")" collection="criterion.value" item="listItem" open="(" separator=",">
+                    #{listItem}
+                  </foreach>
+                </when>
+              </choose>
+            </foreach>
+          </trim>
+        </if>
+      </foreach>
+    </where>
+  </sql>
+  <sql id="Base_Column_List">
+    rid, available, description, role
+  </sql>
+  <select id="selectByExample" parameterType="com.lxx.hserver.entity.RoleExample" resultMap="BaseResultMap">
+    select
+    <if test="distinct">
+      distinct
+    </if>
+    <include refid="Base_Column_List" />
+    from role
+    <if test="_parameter != null">
+      <include refid="Example_Where_Clause" />
+    </if>
+    <if test="orderByClause != null">
+      order by ${orderByClause}
+    </if>
+  </select>
+  <select id="selectByPrimaryKey" parameterType="java.lang.Integer" resultMap="BaseResultMap">
+    select 
+    <include refid="Base_Column_List" />
+    from role
+    where rid = #{rid,jdbcType=INTEGER}
+  </select>
+  <select id="getAllRoles" resultMap="BaseResultMap" >
+    select r.*,p.name as pname,p.pid,p.permission,p.path,p.url
+    from role r left join permission_role pr on r.rid=pr.rid
+    left join permission p on p.pid=pr.pid
+     where r.role!='role'
+  </select>
+  <delete id="deleteByPrimaryKey" parameterType="java.lang.Integer">
+    delete from role
+    where rid = #{rid,jdbcType=INTEGER}
+  </delete>
+  <delete id="deleteByExample" parameterType="com.lxx.hserver.entity.RoleExample">
+    delete from role
+    <if test="_parameter != null">
+      <include refid="Example_Where_Clause" />
+    </if>
+  </delete>
+  <insert id="insert" parameterType="com.lxx.hserver.entity.Role">
+    insert into role (rid, available, description, 
+      role)
+    values (#{rid,jdbcType=INTEGER}, #{available,jdbcType=BIT}, #{description,jdbcType=VARCHAR}, 
+      #{role,jdbcType=VARCHAR})
+  </insert>
+  <insert id="insertSelective" parameterType="com.lxx.hserver.entity.Role">
+    insert into role
+    <trim prefix="(" suffix=")" suffixOverrides=",">
+      <if test="rid != null">
+        rid,
+      </if>
+      <if test="available != null">
+        available,
+      </if>
+      <if test="description != null">
+        description,
+      </if>
+      <if test="role != null">
+        role,
+      </if>
+    </trim>
+    <trim prefix="values (" suffix=")" suffixOverrides=",">
+      <if test="rid != null">
+        #{rid,jdbcType=INTEGER},
+      </if>
+      <if test="available != null">
+        #{available,jdbcType=BIT},
+      </if>
+      <if test="description != null">
+        #{description,jdbcType=VARCHAR},
+      </if>
+      <if test="role != null">
+        #{role,jdbcType=VARCHAR},
+      </if>
+    </trim>
+  </insert>
+  <select id="countByExample" parameterType="com.lxx.hserver.entity.RoleExample" resultType="java.lang.Long">
+    select count(*) from role
+    <if test="_parameter != null">
+      <include refid="Example_Where_Clause" />
+    </if>
+  </select>
+  <update id="updateByExampleSelective" parameterType="map">
+    update role
+    <set>
+      <if test="record.rid != null">
+        rid = #{record.rid,jdbcType=INTEGER},
+      </if>
+      <if test="record.available != null">
+        available = #{record.available,jdbcType=BIT},
+      </if>
+      <if test="record.description != null">
+        description = #{record.description,jdbcType=VARCHAR},
+      </if>
+      <if test="record.role != null">
+        role = #{record.role,jdbcType=VARCHAR},
+      </if>
+    </set>
+    <if test="_parameter != null">
+      <include refid="Update_By_Example_Where_Clause" />
+    </if>
+  </update>
+  <update id="updateByExample" parameterType="map">
+    update role
+    set rid = #{record.rid,jdbcType=INTEGER},
+      available = #{record.available,jdbcType=BIT},
+      description = #{record.description,jdbcType=VARCHAR},
+      role = #{record.role,jdbcType=VARCHAR}
+    <if test="_parameter != null">
+      <include refid="Update_By_Example_Where_Clause" />
+    </if>
+  </update>
+  <update id="updateByPrimaryKeySelective" parameterType="com.lxx.hserver.entity.Role">
+    update role
+    <set>
+      <if test="available != null">
+        available = #{available,jdbcType=BIT},
+      </if>
+      <if test="description != null">
+        description = #{description,jdbcType=VARCHAR},
+      </if>
+      <if test="role != null">
+        role = #{role,jdbcType=VARCHAR},
+      </if>
+    </set>
+    where rid = #{rid,jdbcType=INTEGER}
+  </update>
+  <update id="updateByPrimaryKey" parameterType="com.lxx.hserver.entity.Role">
+    update role
+    set available = #{available,jdbcType=BIT},
+      description = #{description,jdbcType=VARCHAR},
+      role = #{role,jdbcType=VARCHAR}
+    where rid = #{rid,jdbcType=INTEGER}
+  </update>
+  <delete id="deleteRolePermission" parameterType="int" >
+    delete from permission_role
+    where rid=#{rid} and pid=#{pid}
+  </delete>
+  <insert id="addPermissionWithRole" >
+    insert into permission_role(rid,pid) values
+    <foreach collection="pids" item="pid" separator=",">
+      (#{rid},#{pid})
+    </foreach>
+  </insert>
+</mapper>

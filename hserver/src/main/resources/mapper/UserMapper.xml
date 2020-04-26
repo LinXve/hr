@@ -1,0 +1,322 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.lxx.hserver.mapper.UserMapper">
+    <resultMap id="BaseResultMap" type="com.lxx.hserver.entity.User">
+        <id column="id" jdbcType="INTEGER" property="id"/>
+        <result column="username" jdbcType="VARCHAR" property="username"/>
+        <result column="password" jdbcType="VARCHAR" property="password"/>
+        <result column="state" jdbcType="BIT" property="state"/>
+        <result column="name" jdbcType="VARCHAR" property="name"/>
+        <result column="userfase" jdbcType="VARCHAR" property="userfase"/>
+        <result column="remark" jdbcType="VARCHAR" property="remark"/>
+    </resultMap>
+    <resultMap id="FindByNameResult" type="com.lxx.hserver.entity.User" extends="BaseResultMap">
+        <collection property="roles" ofType="com.lxx.hserver.entity.Role">
+            <id property="rid" column="rid"/>
+            <result property="available" column="available"/>
+            <result property="description" column="description"/>
+            <result property="role" column="role"/>
+            <collection property="permissions" ofType="com.lxx.hserver.entity.Permission">
+                <id property="pid" column="pid"/>
+                <result property="name" column="pname"/>
+                <result property="permission" column="permission"/>
+                <result property="url" column="url"/>
+                <result property="path" column="path"/>
+            </collection>
+        </collection>
+    </resultMap>
+    <sql id="Example_Where_Clause">
+        <where>
+            <foreach collection="oredCriteria" item="criteria" separator="or">
+                <if test="criteria.valid">
+                    <trim prefix="(" prefixOverrides="and" suffix=")">
+                        <foreach collection="criteria.criteria" item="criterion">
+                            <choose>
+                                <when test="criterion.noValue">
+                                    and ${criterion.condition}
+                                </when>
+                                <when test="criterion.singleValue">
+                                    and ${criterion.condition} #{criterion.value}
+                                </when>
+                                <when test="criterion.betweenValue">
+                                    and ${criterion.condition} #{criterion.value} and #{criterion.secondValue}
+                                </when>
+                                <when test="criterion.listValue">
+                                    and ${criterion.condition}
+                                    <foreach close=")" collection="criterion.value" item="listItem" open="("
+                                             separator=",">
+                                        #{listItem}
+                                    </foreach>
+                                </when>
+                            </choose>
+                        </foreach>
+                    </trim>
+                </if>
+            </foreach>
+        </where>
+    </sql>
+    <sql id="Update_By_Example_Where_Clause">
+        <where>
+            <foreach collection="example.oredCriteria" item="criteria" separator="or">
+                <if test="criteria.valid">
+                    <trim prefix="(" prefixOverrides="and" suffix=")">
+                        <foreach collection="criteria.criteria" item="criterion">
+                            <choose>
+                                <when test="criterion.noValue">
+                                    and ${criterion.condition}
+                                </when>
+                                <when test="criterion.singleValue">
+                                    and ${criterion.condition} #{criterion.value}
+                                </when>
+                                <when test="criterion.betweenValue">
+                                    and ${criterion.condition} #{criterion.value} and #{criterion.secondValue}
+                                </when>
+                                <when test="criterion.listValue">
+                                    and ${criterion.condition}
+                                    <foreach close=")" collection="criterion.value" item="listItem" open="("
+                                             separator=",">
+                                        #{listItem}
+                                    </foreach>
+                                </when>
+                            </choose>
+                        </foreach>
+                    </trim>
+                </if>
+            </foreach>
+        </where>
+    </sql>
+    <sql id="Base_Column_List">
+    id, username, password, state, name, userfase, remark
+  </sql>
+
+    <select id="selectByExample" parameterType="com.lxx.hserver.entity.UserExample" resultMap="BaseResultMap">
+        select
+        <if test="distinct">
+            distinct
+        </if>
+        <include refid="Base_Column_List"/>
+        from user
+        <if test="_parameter != null">
+            <include refid="Example_Where_Clause"/>
+        </if>
+        <if test="orderByClause != null">
+            order by ${orderByClause}
+        </if>
+    </select>
+    <select id="selectByPrimaryKey" parameterType="java.lang.Integer" resultMap="BaseResultMap">
+        select
+        <include refid="Base_Column_List"/>
+        from user
+        where id = #{id,jdbcType=INTEGER}
+    </select>
+    <delete id="deleteByPrimaryKey" parameterType="java.lang.Integer">
+    delete from user
+    where id = #{id,jdbcType=INTEGER}
+  </delete>
+    <delete id="deleteByExample" parameterType="com.lxx.hserver.entity.UserExample">
+        delete from user
+        <if test="_parameter != null">
+            <include refid="Example_Where_Clause"/>
+        </if>
+    </delete>
+    <insert id="insert" parameterType="com.lxx.hserver.entity.User">
+    insert into user (id, username, password, 
+       state, name, userfase,
+      remark)
+    values (#{id,jdbcType=INTEGER}, #{username,jdbcType=VARCHAR}, #{password,jdbcType=VARCHAR}, 
+     #{state,jdbcType=BIT}, #{name,jdbcType=VARCHAR}, #{userfase,jdbcType=VARCHAR},
+      #{remark,jdbcType=VARCHAR})
+  </insert>
+    <insert id="insertSelective" parameterType="com.lxx.hserver.entity.User">
+        insert into user
+        <trim prefix="(" suffix=")" suffixOverrides=",">
+            <if test="id != null">
+                id,
+            </if>
+            <if test="username != null">
+                username,
+            </if>
+            <if test="password != null">
+                password,
+            </if>
+            <if test="state != null">
+                state,
+            </if>
+            <if test="name != null">
+                name,
+            </if>
+            <if test="userfase != null">
+                userfase,
+            </if>
+            <if test="remark != null">
+                remark,
+            </if>
+        </trim>
+        <trim prefix="values (" suffix=")" suffixOverrides=",">
+            <if test="id != null">
+                #{id,jdbcType=INTEGER},
+            </if>
+            <if test="username != null">
+                #{username,jdbcType=VARCHAR},
+            </if>
+            <if test="password != null">
+                #{password,jdbcType=VARCHAR},
+            </if>
+            <if test="state != null">
+                #{state,jdbcType=BIT},
+            </if>
+            <if test="name != null">
+                #{name,jdbcType=VARCHAR},
+            </if>
+            <if test="userfase != null">
+                #{userfase,jdbcType=VARCHAR},
+            </if>
+            <if test="remark != null">
+                #{remark,jdbcType=VARCHAR},
+            </if>
+        </trim>
+    </insert>
+    <select id="countByExample" parameterType="com.lxx.hserver.entity.UserExample" resultType="java.lang.Long">
+        select count(*) from user
+        <if test="_parameter != null">
+            <include refid="Example_Where_Clause"/>
+        </if>
+    </select>
+    <update id="updateByExampleSelective" parameterType="map">
+        update user
+        <set>
+            <if test="record.id != null">
+                id = #{record.id,jdbcType=INTEGER},
+            </if>
+            <if test="record.username != null">
+                username = #{record.username,jdbcType=VARCHAR},
+            </if>
+            <if test="record.password != null">
+                password = #{record.password,jdbcType=VARCHAR},
+            </if>
+            <if test="record.state != null">
+                state = #{record.state,jdbcType=BIT},
+            </if>
+            <if test="record.name != null">
+                name = #{record.name,jdbcType=VARCHAR},
+            </if>
+            <if test="record.userfase != null">
+                userfase = #{record.userfase,jdbcType=VARCHAR},
+            </if>
+            <if test="record.remark != null">
+                remark = #{record.remark,jdbcType=VARCHAR},
+            </if>
+        </set>
+        <if test="_parameter != null">
+            <include refid="Update_By_Example_Where_Clause"/>
+        </if>
+    </update>
+    <update id="updateByExample" parameterType="map">
+        update user
+        set id = #{record.id,jdbcType=INTEGER},
+        username = #{record.username,jdbcType=VARCHAR},
+        password = #{record.password,jdbcType=VARCHAR},
+        state = #{record.state,jdbcType=BIT},
+        name = #{record.name,jdbcType=VARCHAR},
+        userfase = #{record.userfase,jdbcType=VARCHAR},
+        remark = #{record.remark,jdbcType=VARCHAR}
+        <if test="_parameter != null">
+            <include refid="Update_By_Example_Where_Clause"/>
+        </if>
+    </update>
+    <update id="updateByPrimaryKeySelective" parameterType="com.lxx.hserver.entity.User">
+        update user
+        <set>
+            <if test="username != null">
+                username = #{username,jdbcType=VARCHAR},
+            </if>
+            <if test="password != null">
+                password = #{password,jdbcType=VARCHAR},
+            </if>
+            <if test="state != null">
+                state = #{state,jdbcType=BIT},
+            </if>
+            <if test="name != null">
+                name = #{name,jdbcType=VARCHAR},
+            </if>
+            <if test="userfase != null">
+                userfase = #{userfase,jdbcType=VARCHAR},
+            </if>
+            <if test="remark != null">
+                remark = #{remark,jdbcType=VARCHAR},
+            </if>
+        </set>
+        where id = #{id,jdbcType=INTEGER}
+    </update>
+    <update id="updateByPrimaryKey" parameterType="com.lxx.hserver.entity.User">
+    update user
+    set username = #{username,jdbcType=VARCHAR},
+      password = #{password,jdbcType=VARCHAR},
+      state = #{state,jdbcType=BIT},
+      name = #{name,jdbcType=VARCHAR},
+      userfase = #{userfase,jdbcType=VARCHAR},
+      remark = #{remark,jdbcType=VARCHAR}
+    where id = #{id,jdbcType=INTEGER}
+  </update>
+
+    <select id="findByname" resultMap="FindByNameResult" parameterType="String">
+        select  u.id,u.username,u.password,u.state,u.name,u.userfase,u.remark,
+    r.rid,r.available,r.description,r.role,p.pid,p.permission,p.url,p.name as pname,p.path
+        from user u left join  user_role ur on  u.id=ur.uid
+        left join role r on r.rid=ur.rid
+        left join  permission_role pr on  pr.rid= r.rid
+        left join permission p on p.pid=pr.pid
+        where u.username=#{username}
+  </select>
+
+    <delete id="deleteById" parameterType="int" >
+        delete  from  user
+        <if test="id!=null">
+            where id=#{id}
+        </if>
+    </delete>
+<!--删除中间表关联-->
+    <delete id="deleteUserRolesByUId" parameterType="int" >
+        delete from user_role
+            where uid=#{uid}
+    </delete>
+<!--    模糊查询-->
+    <select id="getUserByKeyWords" parameterType="string" resultMap="FindByNameResult">
+        select u.*,r.*,p.*
+        from user u left join  user_role ur on  u.id=ur.uid
+        left join role r on r.rid=ur.rid
+        left join  permission_role pr on  pr.rid= r.rid
+        left join permission p on p.pid=pr.pid
+        where u.id not in
+        (select ur.uid
+        from role r , user_role ur where ur.rid=r.rid  and r.role='admin')
+        <if test="keywords!='' and keywords!=null">
+            and u.username like concat('%',#{keywords},'%')
+        </if>
+    </select>
+
+    <insert id="register" parameterType="user"  useGeneratedKeys="true" keyColumn="id" keyProperty="id" >
+        insert into user(name,username,password,state,userfase)
+        values (#{name},#{username},#{password},1,#{userfase});
+    </insert>
+    <insert id="insertUserRole" useGeneratedKeys="true" parameterType="int">
+        insert into user_role(uid,rid)
+        values (#{uid},2)
+    </insert>
+    <insert id="addUserRoles" >
+        insert into user_role(uid,rid)
+        values
+        <foreach collection="rids" separator="," item="rid">
+            (#{uid},#{rid})
+        </foreach>
+    </insert>
+    <select id="getAllFriend" parameterType="int" resultType="user">
+        select u.id,u.username,u.userfase,u.name
+        from user u
+        where u.state =true
+        <if test="currentId!=null">
+            and u.id!=#{currentId}
+        </if>
+
+    </select>
+</mapper>

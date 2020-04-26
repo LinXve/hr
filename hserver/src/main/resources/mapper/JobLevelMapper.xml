@@ -1,0 +1,56 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.lxx.hserver.mapper.JobLevelMapper">
+    <resultMap id="baseResult" type="jobLevel" >
+        <id column="id" property="id"/>
+        <result property="name" column="name"/>
+        <result property="titleLevel" column="titleLevel"/>
+        <result column="createDate" property="createDate"/>
+        <result property="enabled" column="enabled"/>
+    </resultMap>
+    <select id="getAllJobLevel" resultMap="baseResult">
+        select *
+        from joblevel
+        where enabled =true;
+    </select>
+    <select id="getAllJobLevel2" resultMap="baseResult">
+        select *
+        from joblevel
+    </select>
+    <select id="getJobLevelByName" parameterType="string" resultType="int">
+        select count(1)
+        from joblevel
+        where name=#{name}
+    </select>
+    <insert id="addJobLevel" parameterType="jobLevel">
+        insert into joblevel(`name`,titleLevel,createDate)
+        values (#{joblevel.name},#{joblevel.titleLevel},#{joblevel.createDate})
+    </insert>
+    <update id="updateJobLevel" parameterType="joblevel" >
+        update jobLevel
+        <set>
+            <if test="joblevel.name!=null">
+                `name`=#{joblevel.name},
+            </if>
+            <if test="joblevel.titleLevel!=null ">
+                titleLevel=#{joblevel.titleLevel},
+            </if>
+            <if test="joblevel.createDate!=null ">
+                createDate=#{joblevel.createDate},
+            </if>
+            <if test="joblevel.enabled!=null">
+                enabled=#{joblevel.enabled},
+            </if>
+        </set>
+        <if test="joblevel.id!=null">
+            where id=#{joblevel.id}
+        </if>
+    </update>
+    <delete id="deleteByIdArry" parameterType="string" >
+        delete from joblevel
+        where id in
+        <foreach collection="ids" item="id" open="(" close=")" separator="," >
+            #{id}
+        </foreach>
+    </delete>
+</mapper>

@@ -1,0 +1,39 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.lxx.hserver.mapper.SysMsgMapper" >
+    <resultMap id="BaseResultMap" type="SysMsg">
+        <id column="id" property="id"/>
+        <result property="mid" column="mid"/>
+        <result column="type" property="type"/>
+        <result property="userId" column="userId" />
+        <result column="state" property="state"/>
+        <association property="msgContent" javaType="MsgContent">
+            <id property="id" column="mcid"/>
+            <result property="message" column="message"/>
+            <result column="title" property="title"/>
+            <result property="createDate" column="createDate"/>
+        </association>
+    </resultMap>
+    <insert id="sendMsg" useGeneratedKeys="true" parameterType="MsgContent" keyProperty="id">
+        insert into msgContent(message,title,createDate) values (#{message},#{title},#{createDate})
+    </insert>
+    <select id="getSysMsgs" resultMap="BaseResultMap" >
+        select sm.*,mc.message,mc.title,mc.createDate,mc.id as mcid
+        from sysmsg sm,msgcontent mc
+        where sm.mid=mc.id and sm.userId=#{userId}
+        order by mc.createDate desc
+    </select>
+    <update id="markRead">
+        update sysmsg set state=1 where userId=#{userId}
+        <if test="flag!=-1">
+            and mid=#{flag}
+        </if>
+    </update>
+    <insert id="addMsg2AllUsers" >
+        insert into  sysmsg(mid,userId)
+        values
+        <foreach collection="users" item="user" separator=",">
+            (#{mid},#{user.id})
+        </foreach>
+    </insert>
+</mapper>
