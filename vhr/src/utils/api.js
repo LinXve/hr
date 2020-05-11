@@ -45,7 +45,6 @@ export const postRequest = (url,params) => {
   return axios({
     method: 'post',
     url: `${base}${url}`,
-    // data这里是一个json对象，需要解开成后端接口对应的请求参数
     data: params,
     transformRequest: [function(data){
       let ret='';

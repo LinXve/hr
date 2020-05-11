@@ -51,7 +51,6 @@ public class UserRealm extends AuthorizingRealm {
 //            false：账户冻结
             throw new LockedAccountException();
         }
-//        用户信息放在session中
         SecurityUtils.getSubject().getSession().setAttribute("username", user.getUsername());
         ByteSource salt = ByteSource.Util.bytes("salt");
         return new SimpleAuthenticationInfo(user.getUsername(), user.getPassword(), salt, getName());
